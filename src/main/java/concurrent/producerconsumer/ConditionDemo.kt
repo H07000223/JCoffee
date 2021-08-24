@@ -49,7 +49,7 @@ object ConditionDemo {
                 }
                 storage.add(random.nextInt(100))
                 println("【生产者】生产中，仓库里有 ${storage.size} 个产品。")
-                notEmpty.signal()
+                notEmpty.signalAll()
                 Thread.sleep(100)
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -62,15 +62,11 @@ object ConditionDemo {
             try {
                 lock.lock()
                 while (storage.size == 0) { // 库空没有库存
-                    try {
-                        println("【消费者】库存已空，待生产 ==========")
-                        notEmpty.await()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    println("【消费者】库存已空，待生产 ==========")
+                    notEmpty.await()
                 }
                 println("【消费者】消费了【产品-${storage.poll()}】，现在仓库还剩下 ${storage.size}")
-                notFull.signal()
+                notFull.signalAll()
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
